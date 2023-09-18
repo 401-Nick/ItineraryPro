@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { GptApiService } from '../../../../core/services/gpt-api.service';
-import { FormsModule } from '@angular/forms';
-import { text } from 'express';
 
 
 @Component({
@@ -17,19 +15,22 @@ export class LandingPageViewComponent {
 
   handleButtonClick(buttonContent: string) {
     console.log('buttonContent: ', buttonContent);
-    this.gptApiService.sendDataToGptApi(buttonContent)
-      .subscribe(response => {
-        // Handle GPT API response
-        this.router.navigate(['/next']);
-      });
+    this.router.navigate(['/chatroom']);
   }
 
   handleTextArea(textContent: string) {
     console.log('textContent: ', textContent);
-    this.gptApiService.sendDataToGptApi(textContent)
-      .subscribe(response => {
-        // Handle GPT API response
-        this.router.navigate(['/next']);
-      });
+    this.router.navigate(['/chatroom']);
+    // 
   }
 }
+
+
+
+
+//Old
+// this.gptApiService.sendDataToGptApi(textContent)
+//     //   .subscribe(response => {
+//     //     // Handle GPT API response
+        
+//     //   });

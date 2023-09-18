@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./chat-interface.component.css']
 })
 export class ChatInterfaceComponent {
+  public messages = [];
+  constructor() {
+
+  }
 
 }

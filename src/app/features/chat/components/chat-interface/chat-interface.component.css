@@ -1,0 +1,102 @@
+/* Chat messages container */
+.chat__messages {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80vh;
+    width: 100%;;
+    overflow-y: scroll;
+    font-size: 1rem;
+    color: white;
+}
+
+/* Assistant's messages */
+.chat__message__assistant {
+    max-width: 75%;
+    width: fit-content;
+    border-radius: 0 10px 10px 0;
+    background-color: #0D1321;
+    margin: 10px 0;
+    padding: 10px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* User's messages */
+.chat__message__user {
+    max-width: 50%;
+    width: fit-content;
+    text-align: right;
+    border-radius: 10px 0 0 10px;
+    background-color: #0D1321;
+    min-width: 200px;
+    margin: auto 0 auto auto;
+    padding: 10px;
+    box-shadow: -10px 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Chat input container */
+.chat__input {
+    backdrop-filter: blur(10px);
+    box-shadow: 0px -30px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20vh;
+    /* background-color: #0D1321; */
+}
+/* Custom scrollbar styles */
+.chat__messages::-webkit-scrollbar {
+    width: 12px;
+    /* Width of the vertical scrollbar */
+}
+
+.chat__messages::-webkit-scrollbar-track {
+    background: #0D1321;
+    /* Background color of the track */
+}
+
+.chat__messages::-webkit-scrollbar-thumb {
+    background: white;
+    /* Color of the scroll thumb */
+    /* border-radius: 6px; */
+    /* Rounded corners on the scroll thumb */
+}
+
+.chat__messages::-webkit-scrollbar-thumb:hover {
+    background: #4a69bb;
+    /* Color of the scroll thumb when hovering */
+}
+/* Chat input field */
+.chat__input input {
+    font-size: 2rem;
+    outline: none;
+    border-radius: 10px;
+    max-width: 95%;
+    width: 95%;
+    height: 75px;
+    margin: auto;
+    text-align: center;
+}
+
+/* Chat send button */
+.chat__input button {
+    margin: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    width: 50%;
+    height: 50px;
+    background-color: #0D1321;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.chat__input button:hover{
+    background-color: #1F4068;
+    color: white;}
