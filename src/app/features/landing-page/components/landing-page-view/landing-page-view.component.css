@@ -1,0 +1,151 @@
+/* Reset Styles */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Video Background */
+#bgVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    /* This line flips the video vertically */
+}
+
+/* Container */
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+/* Headers */
+.headline,
+h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+}
+
+.headline {
+    border-radius: 10px;
+    background-color: #0D1321;
+    padding: 20px;
+    margin-bottom: 2rem;
+}
+
+/* Paragraphs */
+p {
+    font-size: 1.5rem;
+}
+
+/* Input and Button Wrapper */
+.input-button-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Button Grid */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 70%;
+    text-align: center;
+}
+
+.button-grid button {
+    color: white;
+    background-color: #0D1321;
+    width: 100%;
+    height: 50px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
+    transition: background-color 0.5s ease;
+}
+
+.button-grid button:hover {
+    background-color: #1F4068;
+}
+
+/* Textarea and Input */
+textarea {
+    margin-top: 20px;
+    width: 80%;
+    height: 100px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    text-align: center;
+    background-color: #0D1321;
+    transition: background-color 0.5s ease;
+    color: white;
+    min-height: 20px;
+    max-width: 80%;
+}
+
+textarea:hover,
+textarea:focus {
+    background-color: #1F4068;
+    outline: none;
+}
+
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    padding-left: 10px;
+    text-align: center;
+}
+
+/* Go Button */
+.go-button {
+    margin-top: 20px;
+    background-color: #0D1321;
+    width: 40%;
+    height: 50px;
+    font-size: 2rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
+    transition: background-color 0.5s ease;
+    color: white;
+}
+/* Media Queries for Small Mobile Screens */
+@media only screen and (max-width: 768px) {
+
+    /* Option 1: Text Scaling */
+    .button-grid button {
+        font-size: 0.7rem;
+        /* Scale down font-size */
+    }
+
+
+    /* Also scale down the font size of other text elements if needed */
+    .headline,
+    h1 {
+        font-size: 2rem;
+    }
+
+    p,
+    textarea {
+        font-size: 1.2rem;
+    }
+
+    .go-button {
+        font-size: 1.5rem;
+    }
+}
