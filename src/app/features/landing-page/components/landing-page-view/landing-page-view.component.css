@@ -32,6 +32,7 @@ h1 {
 
 /* Paragraphs */
 p {
+    padding-top: 10px;
     font-size: 1rem;
 }
 
