@@ -25,7 +25,7 @@ h1 {
 
 .headline {
     border-radius: 10px;
-    background-color: #0D1321;
+    background-color: black;
     padding: 20px;
     margin-bottom: 2rem;
 }
@@ -57,7 +57,7 @@ p {
 
 .button-grid button {
     color: white;
-    background-color: #0D1321;
+    background-color: black;
     width: 100%;
     min-height: max-content;
     font-size: 1rem;
@@ -83,7 +83,7 @@ textarea {
     border: none;
     font-size: 1rem;
     text-align: center;
-    background-color: #0D1321;
+    background-color: black;
     transition: background-color 0.5s ease;
     color: white;
     min-height: 20px;
@@ -111,7 +111,7 @@ textarea::content{
 /* Go Button */
 .go-button {
     margin-top: 20px;
-    background-color: #0D1321;
+    background-color: black;
     width: 40%;
     padding: 10px;
     min-height: 50px;
