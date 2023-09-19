@@ -1,7 +1,7 @@
-<div class="chat__messages" role="list">
+<!-- <div class="chat__messages" role="list">
 
     <div class="chat__message__assistant">
-        <h1 class="chat__message-sender">Travel Assistant</h1>
+        <h1 class="chat__message-sender">Travel Guide</h1>
         <p class="chat__message-content">Great choice! What's a landmark you've only seen in pictures but want to visit?
         </p>
     </div>
@@ -13,7 +13,7 @@
     </div>
 
     <div class="chat__message__assistant">
-        <h1 class="chat__message-sender">Travel Assistant</h1>
+        <h1 class="chat__message-sender">Travel Guide</h1>
         <p class="chat__message-content">The Eiffel Tower is a stunning landmark! How many days do you plan to spend in
             Paris?
         </p>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="chat__message__assistant">
-        <h1 class="chat__message-sender">Travel Assistant</h1>
+        <h1 class="chat__message-sender">Travel Guide</h1>
         <p class="chat__message-content">Excellent, 5 days gives you a good amount of time to explore Paris and its
             landmarks. Would you like recommendations for other must-see spots near the Eiffel Tower?
         </p>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="chat__message__assistant">
-        <h1 class="chat__message-sender">Travel Assistant</h1>
+        <h1 class="chat__message-sender">Travel Guide</h1>
         <p class="chat__message-content">Great, I recommend visiting the following spots near the Eiffel Tower: <br><br>
             <b>Trocadéro Gardens - Perfect for photos of the Eiffel Tower.<br><br>Seine River Cruise - Enjoy a
                 different
@@ -48,22 +48,18 @@
         </p>
     </div>
 
+</div> -->
+
+<div class="chat__messages" role="list">
+    <div *ngFor="let message of messages" [class.chat__message__assistant]="message.type === 'assistant'"
+        [class.chat__message__user]="message.type === 'user'" role="listitem">
+        <h1 class="chat__message-sender">{{message.author}}</h1>
+        <p class="chat__message-content">{{message.content}}</p>
+    </div>
 </div>
+
+
 <div class="chat__input">
-    <input type="text" class="chat__input-field" placeholder="Type a message...">
-    <button class="chat__input-button">Send</button>
+    <input type="text" class="chat__input-field" placeholder="Type a message..." [(ngModel)]="newMessage">
+    <button class="chat__input-button" (click)="sendMessage(newMessage)">Send</button>
 </div>
-
-
-
-
-
-
-
-
-
-
-<!-- <div class="chat__message" *ngFor="let message of messages" role="listitem">
-        <h1 class="chat__message-sender">{{message}}</h1>
-        <p class="chat__message-content">{{message}}</p>
-    </div> -->

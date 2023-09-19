@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 // Add the import statement for the LandingPageModule
 import { LandingPageModule } from './features/landing-page/landing-page.module';
+import { ChatModule } from './features/chat/chat.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { LandingPageModule } from './features/landing-page/landing-page.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ChatModule,
     FormsModule,  // You can keep this here for global availability
     HttpClientModule,
     LandingPageModule  // Add LandingPageModule here

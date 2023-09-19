@@ -1,5 +1,7 @@
-<video id="bgVideo" autoplay muted loop>
-    <source src="../../../../../assets/waves.webm" type="video/webm">
-</video>
-<div class="blur-container"></div>
-<router-outlet></router-outlet>
+<div (click)="startVideo()">
+    <video id="bgVideo" autoplay muted loop>
+        <source src="../../../../../assets/waves.webm" type="video/webm">
+    </video>
+    <div class="blur-container"></div>
+    <router-outlet></router-outlet>
+</div>

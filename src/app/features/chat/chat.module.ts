@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatInterfaceComponent } from './components/chat-interface/chat-interface.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -9,7 +10,8 @@ import { ChatInterfaceComponent } from './components/chat-interface/chat-interfa
     ChatInterfaceComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule
   ]
 })
 export class ChatModule { }

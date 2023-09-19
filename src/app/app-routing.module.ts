@@ -10,8 +10,8 @@ import { LandingPageViewComponent } from './features/landing-page/components/lan
 const routes: Routes = [
   { path: '', component: LandingPageViewComponent, pathMatch: 'full' },  // Set the landing page as the default route
   {
-    path: 'chatroom',  // Chat room path
-    component: ChatInterfaceComponent  // Chat Interface component
+    path: 'chatroom/:roomId',
+    component: ChatInterfaceComponent // replace with your chat component
   },
   {
     path: 'itinerary',  // Itinerary path
@@ -20,7 +20,9 @@ const routes: Routes = [
   {
     path: 'profile',  // User profile path
     component: ProfileSettingsComponent  // Profile Settings component
-  }
+  },
+  // { path: '**', redirectTo: '' }
+
 ];
 
 @NgModule({
