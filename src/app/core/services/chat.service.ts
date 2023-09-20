@@ -111,8 +111,8 @@ export class ChatService {
   async createChatRoom(): Promise<string> {
     const now = Date.now();
 
-    if (this.lastChatRoomCreationTime && (now - this.lastChatRoomCreationTime) < 5000) {
-      console.log('You must wait 5 seconds between creating chat rooms.');
+    if (this.lastChatRoomCreationTime && (now - this.lastChatRoomCreationTime) < 10000) {
+      console.log('You must wait 10 seconds between creating chat rooms.');
       return '';
     }
 

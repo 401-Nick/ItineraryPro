@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
+// import { routes } from './app-routing.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +18,7 @@ import { ChatModule } from './features/chat/chat.module';
     // Remove LandingPageViewComponent from here
   ],
   imports: [
+    // RouterModule.forRoot(routes),
     BrowserModule,
     AppRoutingModule,
     ChatModule,
