@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { GptApiService } from '../../../../core/services/gpt-api.service';
+// import { GptApiService } from '../../../../core/services/gpt-api.service';
 import { ChatService } from '../../../../core/services/chat.service';
 
 
@@ -15,7 +15,7 @@ export class LandingPageViewComponent {
   public buttonContent: string = "";
   public roomId: string;
 
-  constructor(private chatService: ChatService, private router: Router) { 
+  constructor(private chatService: ChatService, private router: Router) {
     this.roomId = '';
   }
   async generateChatRoom() {
@@ -31,7 +31,7 @@ export class LandingPageViewComponent {
       console.log('buttonContent: ', buttonContent);
       const roomId = await this.generateChatRoom();
       if (roomId) {
-        this.router.navigate(['/chatroom', roomId]);
+        this.router.navigate(['/chatroom', roomId, { buttonContent: buttonContent }]);
       } else {
         console.error('Room ID is not generated.');
       }
@@ -45,7 +45,7 @@ export class LandingPageViewComponent {
       console.log('textContent: ', textContent);
       const roomId = await this.generateChatRoom();
       if (roomId) {
-        this.router.navigate(['/chatroom', roomId]);
+        this.router.navigate(['/chatroom', roomId, { textContent: textContent }]);
       } else {
         console.error('Room ID is not generated.');
       }
@@ -56,13 +56,3 @@ export class LandingPageViewComponent {
 
 
 }
-
-
-
-
-//Old
-// this.gptApiService.sendDataToGptApi(textContent)
-//     //   .subscribe(response => {
-//     //     // Handle GPT API response
-        
-//     //   });

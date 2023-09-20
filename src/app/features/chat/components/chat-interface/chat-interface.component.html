@@ -61,5 +61,7 @@
 
 <div class="chat__input">
     <input type="text" class="chat__input-field" placeholder="Type a message..." [(ngModel)]="newMessage">
-    <button class="chat__input-button" (click)="sendMessage(newMessage)">Send</button>
+    <button class="chat__input-button" (click)="handleSendMessage()">Send</button>
+    <!-- <span *ngIf="remainingTime !== null">Cooldown: {{ remainingTime }} seconds</span> -->
+
 </div>
