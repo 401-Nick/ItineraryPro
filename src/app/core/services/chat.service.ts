@@ -6,34 +6,32 @@ import { BehaviorSubject } from 'rxjs';
 import { Message } from '../../models/message.model';
 import { HttpClient } from '@angular/common/http';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  // State and Initialization
   db = getFirestore(app);
   private _messages = new BehaviorSubject<Message[]>([]);
   public messages$ = this._messages.asObservable();
   private lastChatRoomCreationTime: number | null = null;
-  // private alias = this.getAlias();
 
-  constructor(private router: Router, private http: HttpClient) {
-  }
+  constructor(private router: Router, private http: HttpClient) { }
+
+  // Navigation and Error Handling
   private forceUserToHome(errorCode: string): void {
     this.router.navigate(['/']);
     console.log(`Error: ${errorCode}`);
   }
 
+  // Token Management
   private async generateToken(roomId: string): Promise<string> {
-    //This is a cloud function at the end point https://us-central1-securr-chat.cloudfunctions.net/generateToken
-    //It takes roomId as a query parameter and returns a token
     const response = await fetch(`https://us-central1-securr-chat.cloudfunctions.net/generateToken?roomId=${roomId}`);
     const data = await response.json();
-    console.log(data);
     return data.token;
   }
 
-
+  // Firestore Listeners
   async listenForMessages(roomId: string): Promise<void> {
     const chatRoomRef = doc(this.db, 'chatRooms', roomId);
     onSnapshot(chatRoomRef, (snapshot) => this.handleSnapshot(roomId, snapshot));
@@ -44,122 +42,54 @@ export class ChatService {
       this.forceUserToHome(`No chat room found with ID ${roomId}`);
       return;
     }
-
     const data = snapshot.data();
     if (data && Array.isArray(data['messages'])) {
       this._messages.next(data['messages'] as Message[]);
-    } else {
-      console.log(`Invalid or missing 'messages' field in chat room ${roomId}`);
     }
   }
 
-
-  // setAlias(alias: string): void {
-  //   //make sure alias is not empty
-  //   if (!alias) {
-  //     console.log('Alias is empty');
-  //     return;
-  //   }
-  //   localStorage.setItem('alias', alias);
-  //   this.alias = alias;
-  // }
-
-  // private getAlias(): string {
-  //   return localStorage.getItem('alias') || 'Anonymous';
-  // }
-  // async generateLink(roomId: string): Promise<string> {
-  //   return `https://securr-chat.web.app/chatroom/${roomId}`;
-  // }
-
-
-
-
-
-
-  //VERY IMPORTANT//
+  // User Verification
   async verifyUser(roomId: string): Promise<boolean> {
-    return true;
-    // const storedToken = localStorage.getItem(`token_${roomId}`);
-    // if (storedToken && storedToken.length > 0) {
-    //   // const response = await fetch(`https://us-central1-securr-chat.cloudfunctions.net/verifyToken?roomId=${roomId}&token=${storedToken}`);
-    //   const data = await response.json();
-    //   console.log(data);
-    //   if (data.valid) {
-    //     return true;
-    //   } else {
-    //     this.forceUserToHome(`Token ${storedToken} is not valid for room ID ${roomId}`);
-    //     return false;
-    //   }
-    // } else {
-    //   this.forceUserToHome(`You do not have permission to view room ID ${roomId}`);
-    //   return false;
-    // }
+    return true; // Placeholder for real verification logic
   }
 
-
+  // Chat Functionality
   async callChatFunction(conversationId: string, input: string): Promise<string> {
     const body = { conversationId, input };
-    try {
-      const response = await this.http.post<{ response: string }>('<Firebase Function URL>', body).toPromise();
-      return `AI: ${response!.response}`;
-    } catch (error) {
-      console.error('Error calling the chat function:', error);
-      return 'An error occurred';
-    }
+    const response = await this.http.post<{ response: string }>('<Firebase Function URL>', body).toPromise();
+    return `AI: ${response!.response}`;
   }
 
   async createChatRoom(): Promise<string> {
     const now = Date.now();
-
     if (this.lastChatRoomCreationTime && (now - this.lastChatRoomCreationTime) < 10000) {
-      console.log('You must wait 10 seconds between creating chat rooms.');
       return '';
     }
-
     this.lastChatRoomCreationTime = now;
-    const newChatroom = await addDoc(collection(this.db, 'chatRooms'), {
-      messages: [],
-    });
-
-    // const token = await this.generateToken(newChatroom.id);
-    // localStorage.setItem(`token_${newChatroom.id}`, token);
-
-    // // Update the verifiedTokens array in Firestore to include the new token
-    // const chatRoomRef = doc(this.db, 'chatRooms', newChatroom.id);
-    // await updateDoc(chatRoomRef, {
-    //   verifiedTokens: arrayUnion(token)
-    // });
-
+    const newChatroom = await addDoc(collection(this.db, 'chatRooms'), { messages: [], memory: {} });
     return newChatroom.id;
   }
 
+  // Message Management
   async sendMessage(roomId: string, author: string, messageText: string, type: 'user' | 'assistant'): Promise<void> {
     if (!messageText) {
-      console.log('Message is empty');
       return;
-    } else {
-      const message: Message = {
-        author,
-        content: messageText,
-        type // Add the type field
-      };
-
-      const chatRoomRef = doc(this.db, 'chatRooms', roomId);
-      await updateDoc(chatRoomRef, {
-        messages: arrayUnion(message)
-      });
     }
+    const message: Message = { author, content: messageText, type };
+    const updatedMemory = await this.updateMemory(roomId, message);
+    const chatRoomRef = doc(this.db, 'chatRooms', roomId);
+    await updateDoc(chatRoomRef, {
+      messages: arrayUnion(message),
+      memory: updatedMemory
+    });
   }
 
-
-  // async deleteRoom(roomId: string): Promise<void> {
-  //   if (await this.verifyUser(roomId)) {
-  //     const chatRoomRef = doc(this.db, 'chatRooms', roomId);
-  //     await deleteDoc(chatRoomRef);
-  //     this.forceUserToHome(`Room ID ${roomId} has been deleted`);
-  //   } else {
-  //     console.log('You are not authorized to delete this room');
-  //   }
-
-  // }
+  async updateMemory(roomId: string, message: Message): Promise<any> {
+    const chatRoomRef = doc(this.db, 'chatRooms', roomId);
+    const snapshot = await getDoc(chatRoomRef);
+    const existingMemory = snapshot.data()?.["memory"] || {};
+    existingMemory.messages = existingMemory.messages || [];
+    existingMemory.messages.push(message);
+    return existingMemory;
+  }
 }

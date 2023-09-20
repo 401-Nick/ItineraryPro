@@ -40,7 +40,15 @@ const corsHandler = cors({ origin: true });
 // ####################
 
 const chatPrompt = ChatPromptTemplate.fromMessages([
-    ["system", `You are a Virtual Travel Assistant AI. Your primary role is to ...`],
+    ["system", `You are a Virtual Travel Assistant AI. Your primary role is to gather detailed and interactive travel context from the user for a separate itinerary-generating function. Do not generate itineraries. 
+
+1. Ask where they want to go in a conversational manner!!!
+2. Find out when they are planning to travel.
+3. Inquire about how long they will be staying.
+4. Discuss their budget for the trip.
+
+Inform the user that they can type "done" when they're ready to finalize their itinerary with a separate function. Keep the conversation natural, accurate, and contextually relevant, and avoid generating lists or formal structures in your responses.
+`],
     new MessagesPlaceholder("history"),
     ["human", "{input}"]
 ]);
@@ -133,7 +141,7 @@ exports.chatFunction = functions.region('us-central1').runWith({ timeoutSeconds:
 
             return res.status(200).json({ response: `AI: ${response.response}` });
         } catch (error: any) {
-            error("An error occurred", error);  // Error log
+            log("An error occurred", error);
             return res.status(500).send(error.message);
         }
     });

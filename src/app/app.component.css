@@ -1,4 +1,4 @@
-#bgVideo {
+/* #bgVideo {
     position: fixed;
     top: 0;
     left: 0;
@@ -6,8 +6,7 @@
     height: 100%;
     z-index: -3;
     object-fit: cover;
-    /* This line flips the video vertically */
-}
+} */
 #bgImage{
     position: fixed;
     top: 0;
