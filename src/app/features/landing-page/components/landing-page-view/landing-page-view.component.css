@@ -14,7 +14,16 @@
   align-items: center;
   justify-content: center;
 }
-
+.loading-spinner {
+  background-color: #1f4068;
+  position: fixed;
+  width: 33vw;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  color: white;
+}
 /* Headers */
 .headline,
 h1 {

@@ -7,6 +7,9 @@
 }
 .chat__message-content{
   background-color: #0d1321;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 

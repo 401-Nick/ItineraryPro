@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-// import { GptApiService } from '../../../../core/services/gpt-api.service';
 import { ChatService } from '../../../../core/services/chat.service';
-
-
 
 @Component({
   selector: 'app-landing-page-view',
@@ -14,6 +11,7 @@ export class LandingPageViewComponent {
   public textAreaContent: string = "";
   public buttonContent: string = "";
   public roomId: string;
+  public isLoading: boolean = false;  // Add this line for loading state
 
   constructor(private chatService: ChatService, private router: Router) {
     this.roomId = '';
@@ -30,6 +28,7 @@ export class LandingPageViewComponent {
 
   async handleButtonClick(buttonContent: string) {
     try {
+      this.isLoading = true;  // Start loading
       console.log('buttonContent: ', buttonContent);
       const roomId = await this.chatService.createChatRoom();
       if (roomId) {
@@ -37,13 +36,16 @@ export class LandingPageViewComponent {
       } else {
         console.error('Room ID is not generated.');
       }
+      this.isLoading = false;  // Stop loading
     } catch (error) {
+      this.isLoading = false;  // Stop loading in case of error
       console.error('An error occurred in handleButtonClick:', error);
     }
   }
 
   async handleTextArea(textContent: string) {
     try {
+      this.isLoading = true;  // Start loading
       console.log('textContent: ', textContent);
       const roomId = await this.chatService.createChatRoom();
       if (roomId) {
@@ -51,10 +53,10 @@ export class LandingPageViewComponent {
       } else {
         console.error('Room ID is not generated.');
       }
+      this.isLoading = false;  // Stop loading
     } catch (error) {
+      this.isLoading = false;  // Stop loading in case of error
       console.error('An error occurred in handleTextArea:', error);
     }
   }
-
-
 }

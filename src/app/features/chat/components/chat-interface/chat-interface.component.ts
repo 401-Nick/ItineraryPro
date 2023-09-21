@@ -6,8 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
 import { Message } from '../../../../models/message.model';
-import { Subscription, firstValueFrom, timer } from 'rxjs';
+import { Subscription, debounceTime, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+
 
 
 @Component({
@@ -17,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ChatInterfaceComponent implements OnInit {
   // Properties
+  isSending: boolean = false;  // Add this line
   roomId: string | null = null;
   messages: Message[] = [];
   newMessage: any;
@@ -24,6 +26,8 @@ export class ChatInterfaceComponent implements OnInit {
   newRoomLink: string = '';
   isVerified = false;
   messagesSubscription!: Subscription;
+  private sendMessageSubject = new Subject<string>(); // Step 2: Add a Subject
+
 
   // Constructor
   constructor(
@@ -40,7 +44,19 @@ export class ChatInterfaceComponent implements OnInit {
   // This cant be on init because it'll repass the old message even in the middle of an already started conversation.
   async ngOnInit(): Promise<void> {
     await this.initializeRoom();
+
+    // Step 4: Subscribe to the sendMessageSubject with debounceTime
+    this.sendMessageSubject.pipe(
+      debounceTime(1000)
+    ).subscribe((newMessage) => {
+      this.ngZone.run(() => {
+        this.performSendMessage(newMessage);
+      });
+    });
   }
+
+
+
 
   ngOnDestroy(): void {
     // this.unsubscribeFromMessages();
@@ -79,8 +95,34 @@ export class ChatInterfaceComponent implements OnInit {
     });
   };
 
-  async sendMessage(newMessage: string): Promise<void> {
-    await this.chatService.sendMessage(this.roomId!, newMessage);
+  async performSendMessage(newMessage: string): Promise<void> {
+    this.isSending = true;  // Disable the input
+
+    console.log("Room ID: ", this.roomId);
+    console.log("Message: ", newMessage);
+    let message = newMessage;
     this.newMessage = '';
-  };
+
+    await this.chatService.sendMessage(this.roomId!, message);
+
+    this.isSending = false;  // Enable the input
+  }
+
+
+
+
+  async sendMessage(newMessage: string): Promise<void> {
+    if (this.isSending) {
+      console.log('Sending in progress. Please wait.');
+      return;
+    }
+
+    if (!newMessage) {
+      console.log('No message to send');
+      return;
+    }
+
+    this.sendMessageSubject.next(newMessage); // Push the new message into the Subject
+  }
 }
+
