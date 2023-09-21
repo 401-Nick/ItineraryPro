@@ -1,3 +1,15 @@
+.chat__message-sender{
+  background-color: #0d1321;
+  color: #4a69bb;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+.chat__message-content{
+  background-color: #0d1321;
+}
+
+
 * {
   margin: 0;
   padding: 0;

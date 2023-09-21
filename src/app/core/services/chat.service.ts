@@ -1,95 +1,97 @@
-import { Injectable } from '@angular/core';
-import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, getDoc, arrayUnion, query, onSnapshot } from 'firebase/firestore';
+import { Injectable, isDevMode } from '@angular/core';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { Router } from '@angular/router';
 import { app } from '../../../main';
-import { BehaviorSubject } from 'rxjs';
-import { Message } from '../../models/message.model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  // State and Initialization
   db = getFirestore(app);
-  private _messages = new BehaviorSubject<Message[]>([]);
-  public messages$ = this._messages.asObservable();
-  private lastChatRoomCreationTime: number | null = null;
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient) {
+    this.db = getFirestore(app);
 
-  // Navigation and Error Handling
-  private forceUserToHome(errorCode: string): void {
-    this.router.navigate(['/']);
-    console.log(`Error: ${errorCode}`);
-  }
-
-  // Token Management
-  private async generateToken(roomId: string): Promise<string> {
-    const response = await fetch(`https://us-central1-securr-chat.cloudfunctions.net/generateToken?roomId=${roomId}`);
-    const data = await response.json();
-    return data.token;
-  }
-
-  // Firestore Listeners
-  async listenForMessages(roomId: string): Promise<void> {
-    const chatRoomRef = doc(this.db, 'chatRooms', roomId);
-    onSnapshot(chatRoomRef, (snapshot) => this.handleSnapshot(roomId, snapshot));
-  }
-
-  private handleSnapshot(roomId: string, snapshot: any): void {
-    if (!snapshot.exists()) {
-      this.forceUserToHome(`No chat room found with ID ${roomId}`);
-      return;
-    }
-    const data = snapshot.data();
-    if (data && Array.isArray(data['messages'])) {
-      this._messages.next(data['messages'] as Message[]);
+    // Point to Firestore emulator if in development mode
+    if (isDevMode()) {
+      console.log('Development mode!');
+      connectFirestoreEmulator(this.db, 'localhost', 8080);
+    } else {
+      console.log('Production mode!');
     }
   }
 
-  // User Verification
-  async verifyUser(roomId: string): Promise<boolean> {
-    return true; // Placeholder for real verification logic
-  }
+  /**
+   * callFirebaseFunction - Generalized method to call a Firebase Function.
+   *
+   * @param {string} endpoint - The specific function endpoint you want to hit (e.g., 'chatFunction').
+   * @param {string} projectId - The Firebase project ID (e.g., 'itinerary-pro-project').
+   * @param {any} additionalBody - Additional data to be sent in the request body.
+   *
+   * @returns {Promise<any>} - Returns a Promise that resolves to the server response or null.
+   *                           If an error occurs, the Promise will be rejected.
+   *
+   * ### Example Usage:
+   * 
+   * ```typescript
+   * const response = await this.callFirebaseFunction('chatFunction', 'itinerary-pro-project', { roomId: '123', newMessage: 'Hello' });
+   * if (response) {
+   *   // Handle the response
+   * } else {
+   *   // Handle no response
+   * }
+   * ```
+   */
+  private async callFirebaseFunction(
+    endpoint: string,
+    projectId: string,
+    additionalBody: any
+  ): Promise<any> {
+    console.log(`Calling Firebase Function on endpoint: ${endpoint}`);
 
-  // Chat Functionality
-  async callChatFunction(conversationId: string, input: string): Promise<string> {
-    const body = { conversationId, input };
-    const response = await this.http.post<{ response: string }>('<Firebase Function URL>', body).toPromise();
-    return `AI: ${response!.response}`;
-  }
+    let baseUrl: string;
 
-  async createChatRoom(): Promise<string> {
-    const now = Date.now();
-    if (this.lastChatRoomCreationTime && (now - this.lastChatRoomCreationTime) < 10000) {
-      return '';
+    if (isDevMode()) {
+      baseUrl = `http://127.0.0.1:5001/${projectId}/us-central1`;
+    } else {
+      baseUrl = `https://us-central1-${projectId}.cloudfunctions.net`;
     }
-    this.lastChatRoomCreationTime = now;
-    const newChatroom = await addDoc(collection(this.db, 'chatRooms'), { messages: [], memory: {} });
-    return newChatroom.id;
-  }
 
-  // Message Management
-  async sendMessage(roomId: string, author: string, messageText: string, type: 'user' | 'assistant'): Promise<void> {
-    if (!messageText) {
-      return;
-    }
-    const message: Message = { author, content: messageText, type };
-    const updatedMemory = await this.updateMemory(roomId, message);
-    const chatRoomRef = doc(this.db, 'chatRooms', roomId);
-    await updateDoc(chatRoomRef, {
-      messages: arrayUnion(message),
-      memory: updatedMemory
+    const url = `${baseUrl}/${endpoint}`;
+    const body = { projectId, ...additionalBody };
+
+    return new Promise<any>((resolve, reject) => {
+      this.http.post(url, body).subscribe({
+        next: (response) => {
+          if (response) {
+            console.log(`Received from Firebase Function: ${JSON.stringify(response)}`);
+            resolve(response);
+          } else {
+            resolve(null);
+          }
+        },
+        error: (error) => {
+          console.error(`Error calling Firebase Function: ${JSON.stringify(error, null, 2)}`);
+          reject(error);
+        },
+        complete: () => {
+          console.log('Request completed.');
+        }
+      });
     });
   }
 
-  async updateMemory(roomId: string, message: Message): Promise<any> {
-    const chatRoomRef = doc(this.db, 'chatRooms', roomId);
-    const snapshot = await getDoc(chatRoomRef);
-    const existingMemory = snapshot.data()?.["memory"] || {};
-    existingMemory.messages = existingMemory.messages || [];
-    existingMemory.messages.push(message);
-    return existingMemory;
+  async createChatRoom(): Promise<string> {
+    const response = await this.callFirebaseFunction('createChatRoom', 'itinerary-pro-project', {});
+    return response.roomId;
+  }
+
+
+  async sendMessage(roomId: string, newMessage: string): Promise<void> {
+    if (!newMessage) {
+      return;
+    }
+    await this.callFirebaseFunction('sendMessage', 'itinerary-pro-project', { roomId, newMessage });
   }
 }
